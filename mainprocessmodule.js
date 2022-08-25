@@ -9,9 +9,31 @@ import {
 
 ({log, olog} = createLogFunctions("mainprocessmodule"));
 
-import * as cfg from "configmodule.js";
+import papa from "papaparse";
+
+import pathModule from "path";
+
+import fs from "fs";
+
+import * as js2xml from "js2xmlparser";
+
+import * as cfg from "./configmodule.js";
 
 //#############################################################################
-export var execute = function() {
+export var execute = function(e) {
+  var csvString, inputPath, outputPath, result;
   log("execute");
+  olog(e);
+  inputPath = pathModule.resolve(e.inputFile);
+  if (e.outputFile != null) {
+    outputPath = pathModule.resolve(e.outputPath);
+  } else {
+    outputPath = inputPath + ".xml";
+  }
+  csvString = fs.readFileSync(inputPath, "utf8");
+  log(csvString);
+  result = papa.parse(csvString);
+  olog(result.data);
+  result = js2xml.parse("transactions", result.data);
+  olog(result);
 };

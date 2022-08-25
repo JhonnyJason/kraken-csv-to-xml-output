@@ -15,14 +15,19 @@ import meow from 'meow';
 //region internal functions
 getHelpText = function() {
   log("getHelpText");
-  return `Usage
-    $ 
+  return `Usage 
+    $ kraken-csv-to-xml transactions.csv
     
 Options
-    optional:
-        
+    required: arg1, --input-file, -i
+        the path to the csv file to read and translate
+
+    optional: arg2, --output-file, -i
+        the path to the xml file to be written.
+        if it is not defined we will write the output as <input-file-name>.xml 
+
 Examples
-    $  -c
+    $ kraken-csv-to-xml transactions.csv
     ...`;
 };
 
@@ -31,8 +36,12 @@ getOptions = function() {
   return {
     importMeta: import.meta,
     flags: {
-      option: { //optionsname
-        type: "boolean", // or string
+      inputFile: {
+        type: "string", // or string
+        alias: "i"
+      },
+      outputFile: {
+        type: "string",
         alias: "o"
       }
     }
@@ -41,22 +50,29 @@ getOptions = function() {
 
 //#############################################################
 extractMeowed = function(meowed) {
-  var option;
+  var inputFile, output, outputFile;
   log("extractMeowed");
-  option = false; // default
+  inputFile = null;
+  outputFile = null;
   if (meowed.input[0]) {
-    option = meowed.input[0];
+    inputFile = meowed.input[0];
   }
-  if (meowed.flags.option) {
-    option = true;
+  if (meowed.flags.inputFile) {
+    inputFile = meowed.flags.inputFile;
   }
-  return {option};
+  if (meowed.input[1]) {
+    outputFile = meowed.input[1];
+  }
+  if (meowed.flags.outputFile) {
+    output = meowed.flags.outputFile;
+  }
+  return {inputFile, outputFile};
 };
 
 throwErrorOnUsageFail = function(extract) {
   log("throwErrorOnUsageFail");
-  if (!extract.option) {
-    throw new Error("Usag error: no option has been defined!");
+  if (!extract.inputFile) {
+    throw new Error("Usag error: no input-file has been defined!");
   }
 };
 

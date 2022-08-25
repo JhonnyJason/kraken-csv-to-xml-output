@@ -36,13 +36,13 @@ export var cliStartup = async function() {
   try {
     e = ca.extractArguments();
     await mp.execute(e);
-    return printSuccess('All done!');
+    return successLog('All done!');
   } catch (error) {
     err = error;
-    printError("Error!");
-    printError(err);
+    errLog("Error!");
+    errLog(err);
     if (err.stack) {
-      printError(err.stack);
+      errLog(err.stack);
     }
     return process.exit(-1);
   }
